@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#080d18">
-    <meta name="description" content="Migo IA: inteligencia artificial experimental construida desde cero.">
+    <meta name="description" content="Migo IA: inteligencia artificial experimental creada desde cero.">
     <title>Migo IA | Inteligencia Artificial</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +30,11 @@
             overflow-x: hidden;
         }
 
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
         a {
             text-decoration: none;
             color: inherit;
@@ -40,8 +45,8 @@
             inset: 0;
             z-index: -1;
             background:
-                radial-gradient(circle at 20% 20%, #12366b55, transparent 35%),
-                radial-gradient(circle at 80% 60%, #522c8750, transparent 35%),
+                radial-gradient(circle at 15% 20%, #12366b55, transparent 35%),
+                radial-gradient(circle at 85% 65%, #522c8750, transparent 35%),
                 #080d18;
         }
 
@@ -49,18 +54,18 @@
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 10;
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 8%;
-            background: #080d18cc;
-            backdrop-filter: blur(16px);
+            background: #080d18dd;
+            backdrop-filter: blur(18px);
             border-bottom: 1px solid #ffffff12;
         }
 
         .brand {
-            font-size: 23px;
+            font-size: 24px;
             font-weight: 900;
             letter-spacing: -1px;
         }
@@ -72,7 +77,7 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 28px;
+            gap: 25px;
             color: #b6c4d9;
             font-size: 14px;
         }
@@ -81,11 +86,45 @@
             color: #60a5fa;
         }
 
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 24px;
+            border-radius: 11px;
+            border: none;
+            font-size: 14px;
+            font-weight: 800;
+            transition: 0.25s;
+        }
+
+        .primary {
+            background: linear-gradient(100deg, #2563eb, #6548e8);
+            color: white;
+            box-shadow: 0 8px 35px #2563eb44;
+        }
+
+        .primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 45px #2563eb77;
+        }
+
+        .secondary {
+            border: 1px solid #ffffff30;
+            background: #ffffff08;
+            color: #e5edff;
+        }
+
+        .secondary:hover {
+            background: #ffffff18;
+            transform: translateY(-3px);
+        }
+
         .nav-button {
-            padding: 11px 18px;
+            padding: 11px 17px;
             background: #2563eb;
-            color: white !important;
             border-radius: 9px;
+            color: white !important;
             font-weight: 700;
         }
 
@@ -96,14 +135,14 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 130px 20px 80px;
+            padding: 140px 20px 80px;
         }
 
         .tag {
             border: 1px solid #3b82f655;
             background: #1e40af22;
             color: #83bdff;
-            padding: 9px 17px;
+            padding: 10px 18px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: 700;
@@ -144,39 +183,6 @@
             margin-top: 38px;
             flex-wrap: wrap;
             justify-content: center;
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px 25px;
-            border-radius: 11px;
-            font-size: 14px;
-            font-weight: 800;
-            transition: 0.25s;
-        }
-
-        .primary {
-            background: linear-gradient(100deg, #2563eb, #4f46e5);
-            box-shadow: 0 8px 35px #2563eb55;
-            color: white;
-        }
-
-        .primary:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 45px #2563eb88;
-        }
-
-        .secondary {
-            border: 1px solid #ffffff30;
-            background: #ffffff08;
-            color: #e5edff;
-        }
-
-        .secondary:hover {
-            background: #ffffff18;
-            transform: translateY(-4px);
         }
 
         .scroll {
@@ -264,10 +270,6 @@
             margin: auto;
         }
 
-        .technology .button {
-            margin-top: 28px;
-        }
-
         .version {
             display: inline-block;
             margin-top: 25px;
@@ -276,6 +278,104 @@
             background: #ffffff12;
             color: #a9caff;
             font-size: 12px;
+        }
+
+        #chat {
+            display: none;
+            padding-top: 125px;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .chat-frame {
+            width: 100%;
+            height: 850px;
+            display: block;
+            border: 1px solid #315b88;
+            border-radius: 17px;
+            background: #0d1628;
+        }
+
+        .chat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .chat-top h2 {
+            font-size: 30px;
+        }
+
+        .chat-top p {
+            color: #91a4c0;
+            margin-top: 8px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: #020611dd;
+            backdrop-filter: blur(9px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(145deg, #172943, #0c1425);
+            border: 1px solid #3c5c86;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 25px 100px #0009;
+            animation: modalAppear 0.25s ease;
+        }
+
+        .warning-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .modal h2 {
+            font-size: 25px;
+            margin-bottom: 16px;
+        }
+
+        .modal p {
+            color: #b5c5df;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .warning-label {
+            display: inline-block;
+            margin: 18px 0;
+            padding: 8px 13px;
+            border: 1px solid #a8753155;
+            background: #7c4a1422;
+            border-radius: 30px;
+            color: #ffc66e;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
         }
 
         footer {
@@ -302,9 +402,20 @@
             }
         }
 
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
         @media (max-width: 650px) {
             .navbar {
-                padding: 17px 5%;
+                padding: 16px 5%;
             }
 
             .nav-links {
@@ -312,8 +423,9 @@
                 font-size: 12px;
             }
 
-            .nav-links .nav-button {
-                padding: 9px 11px;
+            .nav-links a:nth-child(2),
+            .nav-links a:nth-child(3) {
+                display: none;
             }
 
             .hero h1 {
@@ -322,6 +434,14 @@
 
             section {
                 padding: 75px 6%;
+            }
+
+            .chat-frame {
+                height: 750px;
+            }
+
+            .modal {
+                padding: 25px;
             }
         }
     </style>
@@ -332,22 +452,23 @@
 <div class="background"></div>
 
 <header class="navbar">
-    <a href="#" class="brand">MIGO<span> IA</span></a>
+    <a href="#inicio" class="brand">MIGO<span> IA</span></a>
 
     <nav class="nav-links">
         <a href="#inicio">Inicio</a>
         <a href="#tecnologia">Tecnología</a>
         <a href="#proyecto">Proyecto</a>
-        <a class="nav-button" href="https://migo-ia.streamlit.app/" target="_blank" rel="noopener noreferrer">
+
+        <button class="button nav-button" onclick="mostrarAdvertencia()">
             Probar IA ↗
-        </a>
+        </button>
     </nav>
 </header>
 
 <main>
-    <section class="hero" id="inicio">
 
-        <div class="tag">✦ PROYECTO DE INTELIGENCIA ARTIFICIAL</div>
+    <section class="hero" id="inicio">
+        <div class="tag">✦ INTELIGENCIA ARTIFICIAL INDEPENDIENTE</div>
 
         <h1>MIGO IA</h1>
 
@@ -360,17 +481,12 @@
         </p>
 
         <div class="buttons">
-            <a class="button primary"
-               href="https://migo-ia.streamlit.app/"
-               target="_blank"
-               rel="noopener noreferrer">
+            <button class="button primary" onclick="mostrarAdvertencia()">
                 🚀 PROBAR MIGO IA
-            </a>
+            </button>
 
             <a class="button secondary"
-               href="https://github.com/Minguelasgo-2013/Migo-IA"
-               target="_blank"
-               rel="noopener noreferrer">
+               href="https://github.com/Minguelasgo-2013/Migo-IA">
                 Ver código en GitHub ↗
             </a>
         </div>
@@ -388,7 +504,6 @@
         </p>
 
         <div class="cards">
-
             <article class="card">
                 <div class="card-icon">🧠</div>
                 <h3>Transformer</h3>
@@ -421,10 +536,9 @@
                 <h3>Acceso online</h3>
                 <p>
                     Prueba la versión disponible de Migo IA
-                    directamente desde tu navegador.
+                    directamente desde esta página.
                 </p>
             </article>
-
         </div>
     </section>
 
@@ -440,29 +554,107 @@
 
             <div class="version">MIGO IA · VERSIÓN 1.0.1</div>
 
-            <br>
+            <br><br>
 
-            <a class="button primary"
-               href="https://migo-ia.streamlit.app/"
-               target="_blank"
-               rel="noopener noreferrer">
-                ABRIR EL CHAT DE MIGO IA ↗
-            </a>
+            <button class="button primary" onclick="mostrarAdvertencia()">
+                ABRIR MIGO IA ↗
+            </button>
         </div>
     </section>
+
+    <section id="chat">
+        <div class="chat-container">
+            <div class="chat-top">
+                <div>
+                    <h2>🤖 Migo IA</h2>
+                    <p>Conversación con el modelo experimental.</p>
+                </div>
+
+                <button class="button secondary" onclick="volverInicio()">
+                    ← Volver al inicio
+                </button>
+            </div>
+
+            <iframe
+                class="chat-frame"
+                src="https://migo-ia.streamlit.app/?embed=true"
+                title="Chat de Migo IA"
+                allow="clipboard-read; clipboard-write">
+            </iframe>
+        </div>
+    </section>
+
 </main>
 
+<div class="modal-overlay" id="advertencia">
+    <div class="modal">
+        <div class="warning-icon">⚠️</div>
+
+        <h2>Antes de entrar...</h2>
+
+        <div class="warning-label">FASE EXPERIMENTAL</div>
+
+        <p>
+            Migo IA todavía está en fase experimental y en desarrollo.
+            Puede generar respuestas incorrectas, incoherentes o sin sentido.
+
+            <br><br>
+
+            Su funcionamiento y entrenamiento todavía están siendo mejorados.
+            No utilices sus respuestas como información fiable.
+        </p>
+
+        <div class="modal-buttons">
+            <button class="button primary" onclick="entrarAlChat()">
+                Entendido, probar Migo
+            </button>
+
+            <button class="button secondary" onclick="cerrarAdvertencia()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
 <footer>
-    <strong>MIGO IA</strong> · Proyecto independiente de inteligencia artificial.
+    <strong>MIGO IA</strong>
+    · Proyecto independiente de inteligencia artificial.
     <br>
     © 2026 Migo IA. Desarrollado con Python.
     <br>
-    <a href="https://github.com/Minguelasgo-2013/Migo-IA"
-       target="_blank"
-       rel="noopener noreferrer">
+    <a href="https://github.com/Minguelasgo-2013/Migo-IA">
         GitHub
     </a>
 </footer>
+
+<script>
+    function mostrarAdvertencia() {
+        document.getElementById("advertencia").style.display = "flex";
+    }
+
+    function cerrarAdvertencia() {
+        document.getElementById("advertencia").style.display = "none";
+    }
+
+    function entrarAlChat() {
+        document.getElementById("advertencia").style.display = "none";
+
+        document.getElementById("chat").style.display = "block";
+
+        document.getElementById("chat").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+
+    function volverInicio() {
+        document.getElementById("chat").style.display = "none";
+
+        document.getElementById("inicio").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+</script>
 
 </body>
 </html>
