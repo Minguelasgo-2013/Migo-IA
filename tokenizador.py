@@ -1,6 +1,7 @@
 import os
 import re
 import torch
+from collections import Counter
 
 # 🔧 CAMBIO IMPORTANTE: tokenización por PALABRAS en vez de por CARACTERES.
 # Antes, el modelo tenía que aprender a la vez cómo se deletrea cada palabra
@@ -16,13 +17,23 @@ PATRON_TOKENS = re.compile(r"<\|usuario\|>|<\|asistente\|>|\w+|[^\w\s]", re.UNIC
 
 TOKEN_DESCONOCIDO = "<UNK>"
 
+# 🔧 Límite de vocabulario: nos quedamos solo con las palabras MÁS
+# FRECUENTES. Con un dataset grande, el número de palabras distintas puede
+# llegar a cientos de miles (nombres, números, errores tipográficos...), y
+# cada una de esas palabras agranda las tablas de embeddings del modelo.
+# En CPU y con un modelo tan pequeño, eso vuelve el entrenamiento
+# insoportablemente lento. Limitando a las palabras más comunes, el modelo
+# entrena mucho más rápido y las palabras raras simplemente se tratan como
+# "palabra desconocida" (<UNK>).
+TAMANO_VOCAB_MAXIMO = 8000
+
 # Para reconstruir el texto con espacios en el lugar correcto
 SIN_ESPACIO_ANTES = set(list(",.;:!?)]}»") + ["’", "”"])
 SIN_ESPACIO_DESPUES = set(list("([{«") + ["‘", "“"])
 
 
 class TokenizadorLocal:
-    def __init__(self, ruta_texto_pendrive="datos_entrenamiento.txt"):
+    def __init__(self, ruta_texto_pendrive="datos_entrenamiento.txt", vocab_maximo=TAMANO_VOCAB_MAXIMO):
         if not os.path.exists(ruta_texto_pendrive):
             raise FileNotFoundError(f"❌ Error: No se encuentra el archivo '{ruta_texto_pendrive}'. ¡Ejecuta primero convertir_datos.py!")
 
@@ -31,12 +42,26 @@ class TokenizadorLocal:
 
         palabras = self._tokenizar(self.texto)
 
-        self.palabras_unicas = sorted(set(palabras))
-        self.palabras_unicas.append(TOKEN_DESCONOCIDO)  # para palabras nunca vistas
+        # Nos quedamos solo con las N palabras más frecuentes
+        conteo = Counter(palabras)
+        mas_comunes = [palabra for palabra, _ in conteo.most_common(vocab_maximo)]
+
+        # Nos aseguramos de que las etiquetas especiales siempre estén
+        # incluidas (normalmente ya lo están, al aparecer una vez por diálogo)
+        for etiqueta in ("<|usuario|>", "<|asistente|>"):
+            if etiqueta not in mas_comunes:
+                mas_comunes.append(etiqueta)
+
+        self.palabras_unicas = sorted(set(mas_comunes))
+        self.palabras_unicas.append(TOKEN_DESCONOCIDO)  # para palabras fuera del top
 
         self.tamano_vocabulario = len(self.palabras_unicas)
         self.token_a_int = {t: i for i, t in enumerate(self.palabras_unicas)}
         self.int_a_token = {i: t for i, t in enumerate(self.palabras_unicas)}
+
+        # Guardamos los tokens ya calculados para no tener que re-analizar
+        # el texto completo con la expresión regular una segunda vez
+        self.tokens_todos = palabras
 
     def _tokenizar(self, texto_plano):
         return PATRON_TOKENS.findall(texto_plano)

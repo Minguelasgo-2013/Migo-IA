@@ -33,7 +33,7 @@ if not os.path.exists(RUTA_TEXTO):
 tokenizador = TokenizadorLocal(RUTA_TEXTO)
 vocab_size = tokenizador.tamano_vocabulario
 
-texto_codificado = tokenizador.codificar(tokenizador.texto)
+texto_codificado = tokenizador.codificar(tokenizador.tokens_todos)
 datos_tensores = torch.tensor(texto_codificado, dtype=torch.long).to(dispositivo)
 
 n = int(0.9 * len(datos_tensores))
