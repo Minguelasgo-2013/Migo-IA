@@ -1,150 +1,280 @@
-import streamlit as nn_web
+
+import streamlit as st
 import torch
 import torch.nn.functional as F
 import os
 import time
 
-# Importamos las piezas reales de tu proyecto
 from modelo import MiGeminiDesdeCero
 from tokenizador import TokenizadorLocal
 
-# Configuración visual de la pestaña de Google
-nn_web.set_page_config(page_title="Mi Gemini Local", page_icon="🤖", layout="centered")
+st.set_page_config(
+    page_title="Migo IA",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Configurar rutas locales
+# ---------- DISEÑO ----------
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+.stApp {
+    background:
+      radial-gradient(ellipse at 50% 0%, #142b50 0%, transparent 45%),
+      #080d18;
+    color: #edf4ff;
+}
+[data-testid="stHeader"] {
+    background: transparent;
+}
+[data-testid="stSidebar"] {
+    background: #0d1628;
+    border-right: 1px solid #203653;
+}
+.hero {
+    padding: 35px 10px 25px;
+    text-align: center;
+}
+.logo {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #65baff;
+    margin-bottom: 12px;
+}
+.hero h1 {
+    font-size: clamp(42px, 7vw, 68px);
+    font-weight: 800;
+    letter-spacing: -3px;
+    background: linear-gradient(90deg,#ffffff,#64b5ff,#a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+}
+.hero p {
+    color: #9aacc7;
+    font-size: 16px;
+    margin-top: 12px;
+}
+.status {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-top: 15px;
+    border: 1px solid #245b50;
+    border-radius: 30px;
+    background: #102b2a;
+    color: #75e0bd;
+    font-size: 12px;
+}
+div[data-testid="stChatMessage"] {
+    background: #111d31;
+    border: 1px solid #233956;
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+[data-testid="stChatInput"] {
+    border: 1px solid #376da8;
+    border-radius: 16px;
+    background: #101b2d;
+}
+[data-testid="stChatInput"] textarea {
+    color: #ffffff;
+}
+.stButton button {
+    border-radius: 10px;
+    border: 1px solid #315b88;
+    background: #142844;
+    color: #eaf4ff;
+}
+.stButton button:hover {
+    border-color: #62b5ff;
+    color: #ffffff;
+}
+div[data-testid="stMetric"] {
+    background: #111d31;
+    border: 1px solid #233956;
+    border-radius: 12px;
+    padding: 12px;
+}
+footer {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------- MODELO ----------
 RUTA_TEXTO = "datos_entrenamiento.txt"
 RUTA_PESOS = "mi_gemini_pesos.pth"
-dispositivo = 'cuda' if torch.cuda.is_available() else 'cpu'
+dispositivo = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Función especial para cargar el cerebro una sola vez y que la web vaya rápida
-@nn_web.cache_resource
+@st.cache_resource
 def cargar_cerebro_ia():
     if not os.path.exists(RUTA_TEXTO):
-        return None, None
+        return None, None, None
 
     tokenizador = TokenizadorLocal(RUTA_TEXTO)
-    vocab_size = tokenizador.tamano_vocabulario
+    modelo = MiGeminiDesdeCero(
+        tamano_vocabulario=tokenizador.tamano_vocabulario
+    ).to(dispositivo)
 
-    modelo = MiGeminiDesdeCero(tamano_vocabulario=vocab_size).to(dispositivo)
+    checkpoint_info = None
 
-    # Si ya entrenaste un poco con main.py, cargamos tus pesos guardados
     if os.path.exists(RUTA_PESOS):
-        checkpoint = torch.load(RUTA_PESOS, map_location=dispositivo)
-        if isinstance(checkpoint, dict) and "modelo" in checkpoint:
-            modelo.load_state_dict(checkpoint["modelo"])  # formato nuevo
+        checkpoint_info = torch.load(
+            RUTA_PESOS,
+            map_location=dispositivo
+        )
+
+        if isinstance(checkpoint_info, dict) and "modelo" in checkpoint_info:
+            modelo.load_state_dict(checkpoint_info["modelo"])
         else:
-            modelo.load_state_dict(checkpoint)  # formato antiguo
-    modelo.eval()
-    return modelo, tokenizador
+            modelo.load_state_dict(checkpoint_info)
 
-with nn_web.spinner("🧠 Cargando el cerebro de la IA..."):
-    modelo, tokenizador = cargar_cerebro_ia()
+        modelo.eval()
 
-# ==========================================
-# PANEL LATERAL: controles y estado
-# ==========================================
-with nn_web.sidebar:
-    nn_web.header("⚙️ Ajustes")
+    return modelo, tokenizador, checkpoint_info
 
-    temperatura = nn_web.slider(
-        "🎨 Creatividad (temperatura)",
-        min_value=0.1, max_value=1.5, value=0.7, step=0.1,
-        help="Valores bajos = respuestas más serias y repetitivas. Valores altos = más creativas y caóticas."
+with st.spinner("🧠 Preparando Migo IA..."):
+    modelo, tokenizador, checkpoint_info = cargar_cerebro_ia()
+
+# ---------- BARRA LATERAL ----------
+with st.sidebar:
+    st.markdown("## ⚙️ Ajustes")
+
+    temperatura = st.slider(
+        "Creatividad",
+        min_value=0.1,
+        max_value=1.5,
+        value=0.7,
+        step=0.1
     )
 
-    max_tokens = nn_web.slider(
-        "✏️ Longitud máxima de respuesta",
-        min_value=20, max_value=300, value=100, step=10
+    max_tokens = st.slider(
+        "Longitud de respuesta",
+        min_value=20,
+        max_value=300,
+        value=100,
+        step=10
     )
 
-    nn_web.divider()
-    nn_web.subheader("📊 Estado del modelo")
+    st.divider()
+    st.markdown("## 🧠 Estado de Migo")
 
     if modelo is None or tokenizador is None:
-        nn_web.error("Sin datos de entrenamiento")
+        st.error("No se han encontrado los datos de entrenamiento.")
     elif not os.path.exists(RUTA_PESOS):
-        nn_web.warning("Modelo sin entrenar (pesos no encontrados)")
+        st.warning("El modelo todavía no tiene pesos entrenados.")
     else:
-        nn_web.success("Modelo cargado y listo")
-        _checkpoint_info = torch.load(RUTA_PESOS, map_location=dispositivo)
-        if isinstance(_checkpoint_info, dict) and "paso" in _checkpoint_info:
-            nn_web.markdown(f"**Entrenado hasta el paso:** `{_checkpoint_info['paso']}`")
+        st.success("Modelo cargado y listo")
 
-    nn_web.markdown(f"**Dispositivo:** `{dispositivo.upper()}`")
+    if isinstance(checkpoint_info, dict) and "paso" in checkpoint_info:
+        st.metric("Pasos de entrenamiento", checkpoint_info["paso"])
+
+    st.caption(f"Dispositivo: {dispositivo.upper()}")
+
     if tokenizador is not None:
-        nn_web.markdown(f"**Vocabulario:** `{tokenizador.tamano_vocabulario}` caracteres")
+        st.caption(f"Vocabulario: {tokenizador.tamano_vocabulario} caracteres")
 
-    nn_web.divider()
-    if nn_web.button("🗑️ Borrar conversación", use_container_width=True):
-        nn_web.session_state.mensajes = []
-        nn_web.rerun()
+    st.divider()
 
-# ==========================================
-# CABECERA PRINCIPAL
-# ==========================================
-nn_web.title("🤖 Mi Gemini Conectado")
-nn_web.subheader("Ejecutando lógica Transformer real desde tu carpeta")
+    if st.button("🗑️ Borrar conversación", use_container_width=True):
+        st.session_state.mensajes = []
+        st.rerun()
 
-# Avatares para diferenciar quién habla
-AVATARES = {"user": "👤", "assistant": "🤖"}
+    st.caption("Migo IA · Proyecto independiente")
 
-# Crear el historial de la conversación en la web si no existe
-if "mensajes" not in nn_web.session_state:
-    nn_web.session_state.mensajes = []
+# ---------- CABECERA ----------
+st.markdown("""
+<div class="hero">
+    <div class="logo">INTELIGENCIA ARTIFICIAL INDEPENDIENTE</div>
+    <h1>MIGO IA</h1>
+    <p>Tu asistente experimental, construido desde cero.</p>
+    <div class="status">● Sistema conectado</div>
+</div>
+""", unsafe_allow_html=True)
 
-# Mostrar los mensajes anteriores en la pantalla web
-for mensaje in nn_web.session_state.mensajes:
-    with nn_web.chat_message(mensaje["rol"], avatar=AVATARES.get(mensaje["rol"])):
-        nn_web.markdown(mensaje["texto"])
+# ---------- CONVERSACIÓN ----------
+if "mensajes" not in st.session_state:
+    st.session_state.mensajes = []
 
-# Caja de texto abajo para que el usuario escriba
-if entrada_usuario := nn_web.chat_input("Escribe un mensaje a tu IA..."):
+for mensaje in st.session_state.mensajes:
+    avatar = "🧑" if mensaje["rol"] == "user" else "🤖"
+    with st.chat_message(mensaje["rol"], avatar=avatar):
+        st.markdown(mensaje["texto"])
 
-    with nn_web.chat_message("user", avatar=AVATARES["user"]):
-        nn_web.markdown(entrada_usuario)
-    nn_web.session_state.mensajes.append({"rol": "user", "texto": entrada_usuario})
+entrada_usuario = st.chat_input("Escribe un mensaje a Migo IA...")
 
-    with nn_web.chat_message("assistant", avatar=AVATARES["assistant"]):
-        contenedor_respuesta = nn_web.empty()
+if entrada_usuario:
+    st.session_state.mensajes.append({
+        "rol": "user",
+        "texto": entrada_usuario
+    })
 
-        # Si el usuario no ha generado los datos de entrenamiento todavía
+    with st.chat_message("user", avatar="🧑"):
+        st.markdown(entrada_usuario)
+
+    with st.chat_message("assistant", avatar="🤖"):
+        contenedor = st.empty()
+
         if modelo is None or tokenizador is None:
-            respuesta_error = "❌ Error: No encuentro el archivo 'datos_entrenamiento.txt'. Por favor, ejecuta primero el convertidor de datos (`convertir_datos.py`)."
-            contenedor_respuesta.markdown(respuesta_error)
-            nn_web.session_state.mensajes.append({"rol": "assistant", "texto": respuesta_error})
-        elif not os.path.exists(RUTA_PESOS):
-            respuesta_error = "⚠️ Todavía no he sido entrenado (no encuentro `mi_gemini_pesos.pth`). Ejecuta `entrenar.bat` primero y luego vuelve a intentarlo."
-            contenedor_respuesta.markdown(respuesta_error)
-            nn_web.session_state.mensajes.append({"rol": "assistant", "texto": respuesta_error})
-        else:
-            # 🧠 AQUÍ COMIENZA LA LÓGICA DE TU TRANSFORMER REAL
-            frase_formateada = f"<|usuario|> {entrada_usuario}\n<|asistente|>"
-            contexto_numeros = tokenizador.codificar(frase_formateada)
-            x = torch.tensor([contexto_numeros], dtype=torch.long, device=dispositivo)
+            respuesta = (
+                "No encuentro `datos_entrenamiento.txt`. "
+                "Comprueba que el archivo esté en el repositorio."
+            )
+            contenedor.markdown(respuesta)
 
-            respuesta_completa = ""
+        elif not os.path.exists(RUTA_PESOS):
+            respuesta = (
+                "Todavía no tengo pesos entrenados. "
+                "Entréname primero y vuelve a intentarlo."
+            )
+            contenedor.markdown(respuesta)
+
+        else:
+            frase = f"<|usuario|> {entrada_usuario}\n<|asistente|>"
+            contexto = tokenizador.codificar(frase)
+            x = torch.tensor(
+                [contexto],
+                dtype=torch.long,
+                device=dispositivo
+            )
+
+            respuesta = ""
             tokens_generados = []
 
             with torch.no_grad():
                 for _ in range(max_tokens):
-                    x_cond = x[:, -64:]  # BLOQUE_CONTEXTO
+                    x_cond = x[:, -64:]
                     logits = modelo(x_cond)
-                    logits = logits[:, -1, :] / temperatura  # Temperatura (creatividad)
+                    logits = logits[:, -1, :] / temperatura
 
                     probs = F.softmax(logits, dim=-1)
                     siguiente_token = torch.multinomial(probs, num_samples=1)
                     id_token = siguiente_token.item()
 
-                    # Si la IA decide abrir una nueva etiqueta (fin de la respuesta), frena
-                    palabra_generada = tokenizador.int_a_token.get(id_token, "")
-                    if palabra_generada in ("<|usuario|>", "<|asistente|>"):
+                    palabra = tokenizador.int_a_token.get(id_token, "")
+
+                    if palabra in ("<|usuario|>", "<|asistente|>"):
                         break
 
                     tokens_generados.append(id_token)
-                    respuesta_completa = tokenizador.decodificar(tokens_generados)
-                    contenedor_respuesta.markdown(respuesta_completa + "▌")
-                    x = torch.cat((x, siguiente_token), dim=1)
-                    time.sleep(0.02)  # Simulación de fluidez visual
+                    respuesta = tokenizador.decodificar(tokens_generados)
 
-            contenedor_respuesta.markdown(respuesta_completa if respuesta_completa.strip() else "*(La IA generó un silencio, necesita más entrenamiento)*")
-            nn_web.session_state.mensajes.append({"rol": "assistant", "texto": respuesta_completa})
+                    contenedor.markdown(respuesta + " ▌")
+                    x = torch.cat((x, siguiente_token), dim=1)
+                    time.sleep(0.01)
+
+            if not respuesta.strip():
+                respuesta = "Necesito más entrenamiento para responder mejor."
+
+            contenedor.markdown(respuesta)
+
+    st.session_state.mensajes.append({
+        "rol": "assistant",
+        "texto": respuesta
+    })
