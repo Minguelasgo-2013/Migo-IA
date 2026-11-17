@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migo IA | Inteligencia Artificial</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    background: #070b16;
+    color: #f1f5ff;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 20px 8%;
+    background: rgba(7,11,22,.9);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    border-bottom: 1px solid #1b2944;
+}
+
+.logo {
+    color: #55aaff;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+nav a {
+    color: #c5d2e9;
+    text-decoration: none;
+    margin-left: 22px;
+    font-size: 14px;
+}
+
+nav a:hover { color: #55aaff; }
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 20px 70px;
+    background:
+      radial-gradient(ellipse at 50% 40%, #12346a 0%, transparent 55%);
+}
+
+.tag {
+    color: #64b5ff;
+    border: 1px solid #2878d9;
+    padding: 9px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-size: clamp(55px, 10vw, 100px);
+    letter-spacing: -5px;
+    background: linear-gradient(90deg,#fff,#55aaff,#a77bff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: appear 1.2s ease;
+}
+
+.hero p {
+    max-width: 650px;
+    color: #a9b8d3;
+    font-size: 19px;
+    line-height: 1.7;
+    margin: 25px 0 35px;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 25px;
+    background: #2678e8;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: .3s;
+}
+
+.button:hover {
+    background: #479aff;
+    transform: translateY(-4px);
+}
+
+.button.secondary {
+    background: transparent;
+    border: 1px solid #38628e;
+    margin-left: 10px;
+}
+
+section {
+    padding: 90px 10%;
+}
+
+.section-title {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: #98a9c4;
+    text-align: center;
+    margin-bottom: 45px;
+    line-height: 1.7;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 22px;
+}
+
+.card {
+    background: #101a2c;
+    border: 1px solid #203453;
+    padding: 30px;
+    border-radius: 16px;
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    border-color: #419aff;
+}
+
+.card h3 {
+    color: #67b5ff;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #a9b8d3;
+    line-height: 1.7;
+}
+
+.about {
+    background: #0b1221;
+    text-align: center;
+}
+
+.about p {
+    max-width: 750px;
+    margin: auto;
+    color: #a9b8d3;
+    line-height: 1.9;
+}
+
+footer {
+    text-align: center;
+    padding: 35px;
+    border-top: 1px solid #203453;
+    color: #8293ae;
+}
+
+footer a {
+    color: #55aaff;
+    text-decoration: none;
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width:650px) {
+    header { padding: 17px 5%; }
+    nav a { margin-left: 9px; font-size: 12px; }
+    section { padding: 75px 7%; }
+    .button.secondary { margin: 12px 0 0; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">MIGO IA</div>
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#proyecto">Proyecto</a>
+        <a href="#tecnologia">Tecnología</a>
+        <a href="#github">GitHub</a>
+    </nav>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+    <div class="tag">PROYECTO INDEPENDIENTE DE IA</div>
+
+    <h1>MIGO IA</h1>
+
+    <p>
+        Una inteligencia artificial experimental desarrollada
+        desde cero. Un proyecto dedicado a explorar el
+        entrenamiento de modelos de lenguaje y el aprendizaje automático.
+    </p>
+
+    <div>
+        <a class="button" href="#proyecto">Descubrir Migo</a>
+        <a class="button secondary"
+           href="https://github.com/Minguelasgo-2013/Migo-IA">
+           Ver GitHub
+        </a>
+    </div>
+</section>
+
+<section id="proyecto">
+    <h2 class="section-title">El proyecto</h2>
+    <p class="subtitle">
+        Construyendo una inteligencia artificial propia.
+    </p>
+
+    <div class="cards">
+        <article class="card">
+            <h3>🧠 Modelo propio</h3>
+            <p>
+                Arquitectura experimental de tipo Transformer
+                desarrollada con PyTorch.
+            </p>
+        </article>
+
+        <article class="card">
+            <h3>⚡ Entrenamiento</h3>
+            <p>
+                Experimentación con datos, vocabulario,
+                parámetros y procesos de entrenamiento.
+            </p>
+        </article>
+
+        <article class="card">
+            <h3>💬 Conversación</h3>
+            <p>
+                Desarrollo de herramientas para interactuar
+                con el modelo mediante texto.
+            </p>
+        </article>
+    </div>
+</section>
+
+<section class="about" id="tecnologia">
+    <h2 class="section-title">Tecnología</h2>
+    <p>
+        Migo IA utiliza Python y PyTorch como base tecnológica.
+        El proyecto explora modelos de lenguaje, tokenización,
+        redes neuronales y aprendizaje automático.
+        Su desarrollo continúa evolucionando.
+    </p>
+</section>
+
+<section id="github">
+    <h2 class="section-title">Código abierto</h2>
+    <p class="subtitle">
+        Explora el código y sigue la evolución del proyecto.
+    </p>
+    <div style="text-align:center">
+        <a class="button"
+           href="https://github.com/Minguelasgo-2013/Migo-IA">
+           Visitar repositorio
+        </a>
+    </div>
+</section>
+</main>
+
+<footer>
+    <p>© 2026 Migo IA · Proyecto independiente</p>
+    <p style="margin-top:10px">
+        Desarrollado con Python y PyTorch
+    </p>
+</footer>
+
+</body>
+</html>
