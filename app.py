@@ -109,7 +109,7 @@ footer {visibility: hidden;}
 
 # ---------- MODELO ----------
 RUTA_TEXTO = "datos_entrenamiento.txt"
-RUTA_PESOS = "mi_gemini_pesos.pth"
+RUTA_PESOS = "migo_ia_1_0_1.pth"
 dispositivo = "cuda" if torch.cuda.is_available() else "cpu"
 
 @st.cache_resource
