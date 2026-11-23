@@ -1,0 +1,4 @@
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+streamlit
+llama-cpp-python==0.3.16
+huggingface_hub
